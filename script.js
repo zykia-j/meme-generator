@@ -54,12 +54,6 @@
         bottomLine.className = 'line bottom';
         bottomLine.textContent = bottom;
 
-        // Wire up delete
-        del.addEventListener('click', () => {
-          wrapper.remove();
-          setStatus('Meme removed.');
-        });
-
         // If the image fails, show a friendly message and abort adding this card
         img.addEventListener('error', () => {
           wrapper.remove();
@@ -80,12 +74,14 @@
         return wrapper;
       }
 
-      // Event delegation (future-proof if you add more controls)
+      // Event delegation: one listener on the grid handles every delete button,
+      // including cards added later, instead of attaching a listener per card.
       grid.addEventListener('click', (e) => {
         const btn = e.target.closest('.delete');
-        if (btn) {
-          btn.click();
-        }
+        if (!btn || !grid.contains(btn)) return;
+
+        btn.closest('.meme').remove();
+        setStatus('Meme removed.');
       });
 
       // Handle form submit
